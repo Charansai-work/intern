@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>InternHub Platform</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
+body{background:#0f172a;color:white}
+
+/* AUTH */
+.login{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#020617;
+}
+.box{
+background:#1e293b;
+padding:30px;
+border-radius:14px;
+width:340px;
+text-align:center;
+}
+input,select{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+}
+button{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+background:#38bdf8;
+cursor:pointer;
+width:100%;
+}
+
+/* APP */
+.app{display:none;height:100vh}
+.container{display:flex;height:100%}
+
+/* SIDEBAR */
+.sidebar{
+width:230px;
+background:#020617;
+padding:20px;
+}
+.sidebar h2{color:#38bdf8;margin-bottom:20px}
+.sidebar a{
+display:block;
+padding:10px;
+margin:6px 0;
+border-radius:8px;
+cursor:pointer;
+}
+.sidebar a:hover{background:#1e293b}
+
+/* TOPBAR */
+.topbar{
+background:#1e293b;
+height:60px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+.profileTag{
+background:#334155;
+padding:6px 14px;
+border-radius:8px;
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:20px;
+overflow:auto;
+}
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+}
+.page{display:none}
+.active{display:block}
+
+/* INTERNSHIP CARD */
+.job{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:12px;
+padding:12px 15px;
+background:#0f172a;
+border-radius:10px;
+}
+
+/* APPLY BUTTON */
+.applyBtn{
+background:#38bdf8;
+border:none;
+padding:8px 18px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+width:auto;
+transition:.2s;
+}
+.applyBtn:hover{background:#0ea5e9}
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="login" id="loginPage">
+<div class="box">
+<h2>InternHub Login</h2>
+
+<select id="role">
+<option value="student">Student</option>
+<option value="admin">Admin</option>
+</select>
+
+<input id="username" placeholder="Username">
+<input id="email" placeholder="Email">
+<input type="password" placeholder="Password">
+
+<p id="error" style="color:red"></p>
+
+<button onclick="login()">Login</button>
+
+<p style="margin-top:10px;">
+Don't have an account?
+<span style="color:#38bdf8;cursor:pointer"
+onclick="showRegister()">Register</span>
+</p>
+</div>
+</div>
+
+<!-- REGISTER -->
+
+<div class="login" id="registerPage" style="display:none">
+<div class="box">
+<h2>Register</h2>
+
+<input id="regUsername" placeholder="Username">
+<input id="regEmail" placeholder="Email">
+<input type="password" placeholder="Password">
+
+<p id="regError" style="color:red"></p>
+
+<button onclick="register()">Register</button>
+
+<p style="margin-top:10px;">
+Already have account?
+<span style="color:#38bdf8;cursor:pointer"
+onclick="showLogin()">Login</span>
+</p>
+</div>
+</div>
+
+<!-- APP -->
+
+<div class="app" id="app">
+<div class="container">
+
+<div class="sidebar">
+<h2>InternHub</h2>
+<a onclick="show('dashboard')">Dashboard</a>
+<a onclick="show('internships')">Internships</a>
+<a onclick="show('applications')">Applications</a>
+<a onclick="show('profile')">Profile</a>
+<hr style="margin:15px 0;border-color:#1e293b">
+<a onclick="logout()">Logout</a>
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<h3 id="roleTitle"></h3>
+<div class="profileTag" id="profileName"></div>
+</div>
+
+<div id="dashboard" class="page active"></div>
+
+<div id="internships" class="page">
+<div class="card">
+<h3>Internship Listings</h3>
+
+<div id="adminPost" style="display:none">
+<input id="newIntern" placeholder="Post new internship">
+<button onclick="postIntern()">Post</button>
+</div>
+
+<div id="internList"></div>
+</div>
+</div>
+
+<div id="applications" class="page card">
+<h2>Applications</h2>
+<p>Track internship applications here.</p>
+</div>
+
+<div id="profile" class="page card"></div>
+
+</div>
+</div>
+</div>
+
+<script>
+let role="", username="", email="";
+let internships=[
+"Frontend Developer Intern",
+"Automation Intern",
+"Python Developer Intern"
+];
+
+function validEmail(e){
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+/* AUTH SWITCH */
+function showRegister(){
+loginPage.style.display="none";
+registerPage.style.display="flex";
+}
+function showLogin(){
+registerPage.style.display="none";
+loginPage.style.display="flex";
+}
+
+/* REGISTER */
+function register(){
+let u=regUsername.value;
+let m=regEmail.value;
+
+if(u===""){regError.innerText="Enter username";return;}
+if(!validEmail(m)){regError.innerText="Enter valid email";return;}
+
+localStorage.setItem("registeredUser",u);
+localStorage.setItem("registeredEmail",m);
+
+alert("Registered successfully!");
+showLogin();
+}
+
+/* LOGIN */
+function login(){
+username=usernameInput=username=document.getElementById("username").value;
+email=document.getElementById("email").value;
+role=document.getElementById("role").value;
+
+let savedUser=localStorage.getItem("registeredUser");
+let savedEmail=localStorage.getItem("registeredEmail");
+
+if(savedUser && (username!==savedUser || email!==savedEmail)){
+error.innerText="Invalid credentials";return;
+}
+if(username===""){error.innerText="Enter username";return;}
+if(!validEmail(email)){error.innerText="Enter valid email";return;}
+
+loginPage.style.display="none";
+app.style.display="block";
+
+profileName.innerText=username;
+roleTitle.innerText=(role==="admin"?"Admin Dashboard":"Student Dashboard");
+
+if(role==="admin") adminPost.style.display="block";
+
+loadDashboard();
+loadProfile();
+renderInternships();
+}
+
+/* DASHBOARD */
+function loadDashboard(){
+dashboard.innerHTML=
+`<div class="card">
+<h2>Welcome ${username}</h2>
+<p>${role==="admin"?"Manage internships":"Browse internships and apply."}</p>
+</div>`;
+}
+
+/* PROFILE (cleaned) */
+function loadProfile(){
+profile.innerHTML=
+`<h2>Profile Details</h2>
+<p><b>Name:</b> ${username}</p>
+<p><b>Email:</b> ${email}</p>`;
+}
+
+/* INTERNSHIPS */
+function renderInternships(){
+let html="";
+internships.forEach(job=>{
+html+=`<div class="job">
+<span>${job}</span>
+${role==="student"
+?'<button class="applyBtn" onclick="applyIntern(this)">Apply</button>'
+:'<span style="color:#94a3b8">Posted</span>'}
+</div>`;
+});
+internList.innerHTML=html;
+}
+
+function applyIntern(btn){
+btn.innerText="Applied ✓";
+btn.style.background="#22c55e";
+btn.disabled=true;
+}
+
+function postIntern(){
+let val=newIntern.value;
+if(val==="")return;
+internships.push(val);
+renderInternships();
+}
+
+/* NAVIGATION */
+function show(id){
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function logout(){location.reload();}
+</script>
+
+</body>
+</html>
