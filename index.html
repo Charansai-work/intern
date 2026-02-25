@@ -1,341 +1,301 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <meta charset="UTF-8">
-<title>InternHub Platform</title>
+<title>InternHub</title>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
-body{background:#0f172a;color:white}
-
-/* AUTH */
-.login{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#020617;
-}
-.box{
-background:#1e293b;
-padding:30px;
-border-radius:14px;
-width:340px;
-text-align:center;
-}
-input,select{
-width:100%;
-padding:10px;
-margin:10px 0;
-border:none;
-border-radius:8px;
-}
-button{
-padding:8px 12px;
-border:none;
-border-radius:8px;
-background:#38bdf8;
-cursor:pointer;
-width:100%;
-}
-
-/* APP */
-.app{display:none;height:100vh}
-.container{display:flex;height:100%}
-
-/* SIDEBAR */
-.sidebar{
-width:230px;
-background:#020617;
-padding:20px;
-}
-.sidebar h2{color:#38bdf8;margin-bottom:20px}
-.sidebar a{
-display:block;
-padding:10px;
-margin:6px 0;
-border-radius:8px;
-cursor:pointer;
-}
-.sidebar a:hover{background:#1e293b}
-
-/* TOPBAR */
-.topbar{
-background:#1e293b;
-height:60px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 20px;
-border-radius:10px;
-margin-bottom:20px;
-}
-.profileTag{
-background:#334155;
-padding:6px 14px;
-border-radius:8px;
-}
-
-/* MAIN */
-.main{
-flex:1;
-padding:20px;
-overflow:auto;
-}
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-margin-bottom:20px;
-}
-.page{display:none}
-.active{display:block}
-
-/* INTERNSHIP CARD */
-.job{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-top:12px;
-padding:12px 15px;
-background:#0f172a;
-border-radius:10px;
-}
-
-/* APPLY BUTTON */
-.applyBtn{
-background:#38bdf8;
-border:none;
-padding:8px 18px;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-width:auto;
-transition:.2s;
-}
-.applyBtn:hover{background:#0ea5e9}
-</style>
-
-</head>
-
-<body>
-
-<!-- LOGIN -->
-
-<div class="login" id="loginPage">
-<div class="box">
-<h2>InternHub Login</h2>
-
-<select id="role">
-<option value="student">Student</option>
-<option value="admin">Admin</option>
-</select>
-
-<input id="username" placeholder="Username">
-<input id="email" placeholder="Email">
-<input type="password" placeholder="Password">
-
-<p id="error" style="color:red"></p>
-
-<button onclick="login()">Login</button>
-
-<p style="margin-top:10px;">
-Don't have an account?
-<span style="color:#38bdf8;cursor:pointer"
-onclick="showRegister()">Register</span>
-</p>
-</div>
-</div>
-
-<!-- REGISTER -->
-
-<div class="login" id="registerPage" style="display:none">
-<div class="box">
-<h2>Register</h2>
-
-<input id="regUsername" placeholder="Username">
-<input id="regEmail" placeholder="Email">
-<input type="password" placeholder="Password">
-
-<p id="regError" style="color:red"></p>
-
-<button onclick="register()">Register</button>
-
-<p style="margin-top:10px;">
-Already have account?
-<span style="color:#38bdf8;cursor:pointer"
-onclick="showLogin()">Login</span>
-</p>
-</div>
-</div>
-
-<!-- APP -->
-
-<div class="app" id="app">
-<div class="container">
-
-<div class="sidebar">
-<h2>InternHub</h2>
-<a onclick="show('dashboard')">Dashboard</a>
-<a onclick="show('internships')">Internships</a>
-<a onclick="show('applications')">Applications</a>
-<a onclick="show('profile')">Profile</a>
-<hr style="margin:15px 0;border-color:#1e293b">
-<a onclick="logout()">Logout</a>
-</div>
-
-<div class="main">
-
-<div class="topbar">
-<h3 id="roleTitle"></h3>
-<div class="profileTag" id="profileName"></div>
-</div>
-
-<div id="dashboard" class="page active"></div>
-
-<div id="internships" class="page">
-<div class="card">
-<h3>Internship Listings</h3>
-
-<div id="adminPost" style="display:none">
-<input id="newIntern" placeholder="Post new internship">
-<button onclick="postIntern()">Post</button>
-</div>
-
-<div id="internList"></div>
-</div>
-</div>
-
-<div id="applications" class="page card">
-<h2>Applications</h2>
-<p>Track internship applications here.</p>
-</div>
-
-<div id="profile" class="page card"></div>
-
-</div>
-</div>
-</div>
-
-<script>
-let role="", username="", email="";
-let internships=[
-"Frontend Developer Intern",
-"Automation Intern",
-"Python Developer Intern"
-];
-
-function validEmail(e){
-return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-}
-
-/* AUTH SWITCH */
-function showRegister(){
-loginPage.style.display="none";
-registerPage.style.display="flex";
-}
-function showLogin(){
-registerPage.style.display="none";
-loginPage.style.display="flex";
-}
-
-/* REGISTER */
-function register(){
-let u=regUsername.value;
-let m=regEmail.value;
-
-if(u===""){regError.innerText="Enter username";return;}
-if(!validEmail(m)){regError.innerText="Enter valid email";return;}
-
-localStorage.setItem("registeredUser",u);
-localStorage.setItem("registeredEmail",m);
-
-alert("Registered successfully!");
-showLogin();
+body{
+margin:0;
+font-family:Segoe UI;
+background:
+radial-gradient(circle at 20% 20%, #0ea5e920 0%, transparent 40%),
+radial-gradient(circle at 80% 10%, #38bdf820 0%, transparent 40%),
+linear-gradient(135deg,#020617,#020617,#0f172a);
+color:white;
 }
 
 /* LOGIN */
+.loginWrap{display:flex;justify-content:center;align-items:center;height:100vh;}
+.card{background:#1e293b;padding:28px;border-radius:18px;width:340px;}
+input,select,textarea{
+width:100%;padding:12px;margin:10px 0;border-radius:12px;
+border:1px solid #334155;background:#020617;color:white;
+}
+button{
+background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+border:none;padding:10px;border-radius:12px;color:white;
+cursor:pointer;width:100%;
+}
+.linkBtn{background:none;margin-top:8px;color:#38bdf8}
+.error{color:#ff6b6b}
+
+/* LAYOUT */
+.container{display:flex;height:100vh;}
+.sidebar{
+width:250px;background:#020617cc;padding:20px;
+border-right:1px solid #1e293b;
+display:flex;flex-direction:column;
+}
+.profileTop{
+display:flex;align-items:center;gap:12px;
+margin-bottom:25px;border-bottom:1px solid #1e293b;
+padding-bottom:15px;
+}
+.avatar{
+width:45px;height:45px;border-radius:50%;
+background:#38bdf8;
+display:flex;align-items:center;justify-content:center;
+font-weight:bold;
+}
+.menu{padding:10px;border-radius:10px;cursor:pointer;margin-bottom:6px;}
+.menu:hover{background:#1e293b;color:#38bdf8;}
+.logoutBtn{margin-top:auto;}
+.main{flex:1;padding:30px;overflow:auto;}
+
+.cardBox{
+background:#1e293bcc;
+padding:22px;border-radius:18px;margin-bottom:22px;
+}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.stat{background:#0f172a;padding:20px;border-radius:14px;}
+.job{background:#0f172a;padding:14px;border-radius:12px;margin-top:10px;}
+.bigAvatar{
+width:90px;height:90px;border-radius:50%;
+background:#38bdf8;
+display:flex;align-items:center;justify-content:center;
+font-size:34px;margin:auto;margin-bottom:15px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script>
+const e = React.createElement;
+
+/* ================= AUTH ================= */
+function Auth({onLogin}){
+
+const [mode,setMode]=React.useState("login");
+const [role,setRole]=React.useState("student");
+const [name,setName]=React.useState("");
+const [email,setEmail]=React.useState("");
+const [password,setPassword]=React.useState("");
+const [error,setError]=React.useState("");
+
+function reset(){
+setName("");setEmail("");setPassword("");setError("");
+}
+
+function register(){
+if(!name||!email||password.length<4)
+return setError("Fill all fields correctly");
+
+localStorage.setItem(
+"user_"+email,
+JSON.stringify({username:name,email,password,role})
+);
+
+alert("Account created ✅");
+setMode("login");
+reset();
+}
+
 function login(){
-username=usernameInput=username=document.getElementById("username").value;
-email=document.getElementById("email").value;
-role=document.getElementById("role").value;
-
-let savedUser=localStorage.getItem("registeredUser");
-let savedEmail=localStorage.getItem("registeredEmail");
-
-if(savedUser && (username!==savedUser || email!==savedEmail)){
-error.innerText="Invalid credentials";return;
-}
-if(username===""){error.innerText="Enter username";return;}
-if(!validEmail(email)){error.innerText="Enter valid email";return;}
-
-loginPage.style.display="none";
-app.style.display="block";
-
-profileName.innerText=username;
-roleTitle.innerText=(role==="admin"?"Admin Dashboard":"Student Dashboard");
-
-if(role==="admin") adminPost.style.display="block";
-
-loadDashboard();
-loadProfile();
-renderInternships();
+const saved=localStorage.getItem("user_"+email);
+if(!saved) return setError("Account not found");
+const user=JSON.parse(saved);
+if(user.password!==password) return setError("Wrong password");
+onLogin(user);
 }
 
-/* DASHBOARD */
-function loadDashboard(){
-dashboard.innerHTML=
-`<div class="card">
-<h2>Welcome ${username}</h2>
-<p>${role==="admin"?"Manage internships":"Browse internships and apply."}</p>
-</div>`;
+return e("div",{className:"loginWrap"},
+e("div",{className:"card"},
+e("h2",null,mode==="login"?"InternHub Login":"Create Account"),
+error && e("p",{className:"error"},error),
+
+e("select",{value:role,onChange:i=>setRole(i.target.value)},
+e("option",{value:"student"},"Student"),
+e("option",{value:"admin"},"Admin")
+),
+
+e("input",{placeholder:"Name",value:name,onChange:i=>setName(i.target.value)}),
+e("input",{placeholder:"Email",value:email,onChange:i=>setEmail(i.target.value)}),
+e("input",{type:"password",placeholder:"Password",value:password,onChange:i=>setPassword(i.target.value)}),
+
+mode==="login"
+? e("button",{onClick:login},"Login")
+: e("button",{onClick:register},"Register"),
+
+e("button",{className:"linkBtn",
+onClick:()=>{setMode(mode==="login"?"register":"login");reset();}},
+mode==="login"?"Create Account":"Back to Login")
+));
 }
 
-/* PROFILE (cleaned) */
-function loadProfile(){
-profile.innerHTML=
-`<h2>Profile Details</h2>
-<p><b>Name:</b> ${username}</p>
-<p><b>Email:</b> ${email}</p>`;
+/* ================= DASHBOARD ================= */
+function Dashboard({jobs,apps,user,feedback,addFeedback}){
+
+const myApps=apps.filter(a=>a.email===user.email);
+const myFeedback=user.role==="admin"
+? feedback
+: feedback.filter(f=>f.email===user.email);
+
+const [selected,setSelected]=React.useState("");
+const [text,setText]=React.useState("");
+
+return e("div",null,
+
+e("div",{className:"cardBox"},
+e("h2",null,"Welcome, "+user.username+" 👋")
+),
+
+e("div",{className:"grid"},
+e("div",{className:"stat"},"Internships: "+jobs.length),
+e("div",{className:"stat"},
+user.role==="admin"
+? "Total Applications: "+apps.length
+: "Your Applications: "+myApps.length),
+e("div",{className:"stat"},"Role: "+user.role.toUpperCase())
+),
+
+/* ADMIN FEEDBACK */
+user.role==="admin" &&
+e("div",{className:"cardBox"},
+e("h3",null,"Post Feedback"),
+e("select",{value:selected,onChange:i=>setSelected(i.target.value)},
+e("option",{value:""},"Select Student"),
+...apps.map((a,i)=>e("option",{key:i,value:a.email},a.email))
+),
+e("textarea",{placeholder:"Write feedback...",
+value:text,onChange:i=>setText(i.target.value)}),
+e("button",{onClick:()=>{
+if(!selected||!text.trim()) return;
+addFeedback({email:selected,text});
+setSelected("");setText("");
+}},"Submit Feedback")
+),
+
+e("div",{className:"cardBox"},
+e("h3",null,"Feedback"),
+myFeedback.length===0
+? e("p",null,"No feedback yet")
+: myFeedback.map((f,i)=>e("div",{className:"job",key:i},f.email+" — "+f.text))
+)
+);
 }
 
 /* INTERNSHIPS */
-function renderInternships(){
-let html="";
-internships.forEach(job=>{
-html+=`<div class="job">
-<span>${job}</span>
-${role==="student"
-?'<button class="applyBtn" onclick="applyIntern(this)">Apply</button>'
-:'<span style="color:#94a3b8">Posted</span>'}
-</div>`;
-});
-internList.innerHTML=html;
+function Internships({role,jobs,apply,apps,user,addJob}){
+
+const [newJob,setNewJob]=React.useState("");
+
+return e("div",{className:"cardBox"},
+e("h3",null,"Internships"),
+
+role==="admin" &&
+e("div",null,
+e("input",{placeholder:"Post Internship",
+value:newJob,onChange:i=>setNewJob(i.target.value)}),
+e("button",{onClick:()=>{addJob(newJob);setNewJob("");}},"Post Internship")
+),
+
+jobs.map((j,i)=>
+e("div",{className:"job",key:i},
+j,
+role==="student" &&
+(apps.some(a=>a.job===j && a.email===user.email)
+? e("button",{style:{float:"right",width:"auto",background:"#22c55e"}},"Applied ✓")
+: e("button",{style:{float:"right",width:"auto"},onClick:()=>apply(j)},"Apply"))
+))
+);
 }
 
-function applyIntern(btn){
-btn.innerText="Applied ✓";
-btn.style.background="#22c55e";
-btn.disabled=true;
+/* APPLICATIONS */
+function Applications({apps,user}){
+const list=user.role==="admin"?apps:apps.filter(a=>a.email===user.email);
+return e("div",{className:"cardBox"},
+e("h3",null,"Applications"),
+list.length===0?e("p",null,"No applications yet")
+:list.map((a,i)=>e("div",{className:"job",key:i},a.job+" — "+a.email))
+);
 }
 
-function postIntern(){
-let val=newIntern.value;
-if(val==="")return;
-internships.push(val);
-renderInternships();
+/* PROFILE */
+function Profile({user}){
+return e("div",{className:"cardBox"},
+e("div",{className:"bigAvatar"},user.username[0].toUpperCase()),
+e("h2",null,user.username),
+e("p",null,user.email),
+e("p",null,"Role: "+user.role)
+);
 }
 
-/* NAVIGATION */
-function show(id){
-document.querySelectorAll(".page")
-.forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+/* ================= APP ================= */
+function App(){
+
+const [logged,setLogged]=React.useState(false);
+const [user,setUser]=React.useState(null);
+const [tab,setTab]=React.useState("dashboard");
+
+const [jobs,setJobs]=React.useState([
+"Frontend Developer Intern",
+"Automation Intern",
+"React Developer Intern"
+]);
+
+const [apps,setApps]=React.useState([]);
+const [feedback,setFeedback]=React.useState([]);
+
+function apply(job){
+if(apps.some(a=>a.job===job&&a.email===user.email))return;
+setApps([...apps,{job,email:user.email}]);
 }
 
-function logout(){location.reload();}
+function addJob(job){
+if(!job.trim())return;
+setJobs([...jobs,job]);
+}
+
+function addFeedback(f){
+setFeedback([...feedback,f]);
+}
+
+if(!logged)
+return e(Auth,{onLogin:(u)=>{setUser(u);setLogged(true);}});
+
+return e("div",{className:"container"},
+
+e("div",{className:"sidebar"},
+e("div",{className:"profileTop"},
+e("div",{className:"avatar"},user.username[0].toUpperCase()),
+e("div",null,e("b",null,"InternHub"),e("div",null,user.username))
+),
+
+e("div",{className:"menu",onClick:()=>setTab("dashboard")},"Dashboard"),
+e("div",{className:"menu",onClick:()=>setTab("internships")},"Internships"),
+e("div",{className:"menu",onClick:()=>setTab("applications")},"Applications"),
+e("div",{className:"menu",onClick:()=>setTab("profile")},"Profile"),
+
+e("button",{className:"logoutBtn",onClick:()=>setLogged(false)},"Logout")
+),
+
+e("div",{className:"main"},
+tab==="dashboard" && e(Dashboard,{jobs,apps,user,feedback,addFeedback}),
+tab==="internships" && e(Internships,{role:user.role,jobs,apply,apps,user,addJob}),
+tab==="applications" && e(Applications,{apps,user}),
+tab==="profile" && e(Profile,{user})
+)
+);
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(e(App));
 </script>
-
 </body>
 </html>
