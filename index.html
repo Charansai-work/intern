@@ -1,287 +1,971 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>InternHub Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InternHub - Professional Internship Platform</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      colors: {
+        brand: {
+          50:'#f0f0ff',100:'#e0e1ff',200:'#c7c8fe',300:'#a5a7fc',
+          400:'#8184f8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81'
+        }
+      },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(0,0,0,0.07), 0 10px 20px -2px rgba(0,0,0,0.04)',
+        'card': '0 4px 25px -5px rgba(0,0,0,0.06), 0 10px 30px -5px rgba(0,0,0,0.04)',
+        'card-hover': '0 20px 50px -12px rgba(0,0,0,0.12)',
+        'glow-indigo': '0 0 20px rgba(99,102,241,0.15), 0 0 60px rgba(99,102,241,0.08)',
+        'glow-violet': '0 0 20px rgba(139,92,246,0.15), 0 0 60px rgba(139,92,246,0.08)',
+        'glow-emerald': '0 0 20px rgba(16,185,129,0.15), 0 0 60px rgba(16,185,129,0.08)',
+        'btn': '0 4px 14px 0 rgba(99,102,241,0.35)',
+        'btn-hover': '0 6px 20px rgba(99,102,241,0.45)',
+      }
+    }
+  }
+}
+</script>
+
 <style>
-body{
-background:radial-gradient(circle at top,#020617,#020617,#0f172a);
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family:'Inter','system-ui',sans-serif;
+  background:#f7f8fc;
+  color:#1e293b;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
-.glass{
-background:rgba(15,23,42,.65);
-backdrop-filter:blur(18px);
-border:1px solid rgba(56,189,248,.25);
-box-shadow:0 10px 40px rgba(0,0,0,.4);
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+html{scrollbar-color:#cbd5e1 transparent}
+
+/* ===== Keyframes ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+@keyframes floatSlow{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes gradientMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseRing{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.5);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blob{0%,100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}50%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%}}
+
+.anim-fadeIn{animation:fadeIn .5s ease-out both}
+.anim-slideUp{animation:slideUp .6s cubic-bezier(.22,1,.36,1) both}
+.anim-slideRight{animation:slideRight .6s cubic-bezier(.22,1,.36,1) both}
+.anim-scaleIn{animation:scaleIn .5s cubic-bezier(.22,1,.36,1) both}
+
+/* ===== Glass Card (Light) ===== */
+.card{
+  background:white;
+  border-radius:16px;
+  border:1px solid rgba(226,232,240,0.8);
+  box-shadow:0 4px 25px -5px rgba(0,0,0,0.06),0 10px 30px -5px rgba(0,0,0,0.04);
+  transition:all .35s cubic-bezier(.22,1,.36,1);
 }
-.soft-card{border-radius:26px;}
-.soft-btn{border-radius:16px;}
-.soft-input{border-radius:18px;}
-.glow:hover{
-transform:translateY(-4px);
-box-shadow:0 0 35px rgba(56,189,248,.35);
-transition:.3s;
+.card:hover{
+  box-shadow:0 20px 50px -12px rgba(0,0,0,0.12);
+  transform:translateY(-3px);
+}
+
+/* Accent top border cards */
+.card-accent-indigo{border-top:3px solid #6366f1}
+.card-accent-violet{border-top:3px solid #8b5cf6}
+.card-accent-emerald{border-top:3px solid #10b981}
+.card-accent-amber{border-top:3px solid #f59e0b}
+.card-accent-rose{border-top:3px solid #f43f5e}
+
+/* ===== Buttons ===== */
+.btn-primary{
+  background:linear-gradient(135deg,#6366f1,#4f46e5);
+  color:#fff;
+  padding:10px 24px;
+  border-radius:12px;
+  border:none;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 4px 14px rgba(99,102,241,0.35);
+  letter-spacing:.01em;
+  font-family:inherit;
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(99,102,241,0.45);
+  background:linear-gradient(135deg,#4f46e5,#4338ca);
+}
+.btn-primary:active{transform:translateY(0);box-shadow:0 2px 8px rgba(99,102,241,0.3)}
+
+.btn-secondary{
+  background:#fff;
+  color:#4f46e5;
+  padding:10px 24px;
+  border-radius:12px;
+  border:2px solid #e0e7ff;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:all .3s ease;
+  font-family:inherit;
+}
+.btn-secondary:hover{background:#f0f0ff;border-color:#c7c8fe}
+
+.btn-danger{
+  background:linear-gradient(135deg,#f43f5e,#e11d48);
+  color:#fff;
+  padding:10px 24px;
+  border-radius:12px;
+  border:none;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:all .3s ease;
+  font-family:inherit;
+  box-shadow:0 4px 14px rgba(244,63,94,0.25);
+}
+.btn-danger:hover{box-shadow:0 8px 25px rgba(244,63,94,0.35);transform:translateY(-1px)}
+
+/* ===== Inputs ===== */
+.input{
+  width:100%;
+  padding:12px 16px;
+  background:#f8fafc;
+  border:1.5px solid #e2e8f0;
+  border-radius:12px;
+  color:#1e293b;
+  font-size:14px;
+  font-family:inherit;
+  transition:all .3s ease;
+  outline:none;
+}
+.input:focus{
+  border-color:#6366f1;
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(99,102,241,0.08);
+}
+.input::placeholder{color:#94a3b8}
+
+select.input{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:40px;
+  cursor:pointer;
+}
+
+/* ===== Sidebar (Light) ===== */
+.sidebar{
+  background:#fff;
+  border-right:1px solid #f1f5f9;
+  box-shadow:4px 0 20px rgba(0,0,0,0.03);
+}
+
+.sidebar-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 16px;
+  margin-bottom:2px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .25s ease;
+  color:#64748b;
+  font-weight:500;
+  font-size:14px;
+}
+.sidebar-item:hover{background:#f8fafc;color:#334155}
+.sidebar-item-active{
+  background:linear-gradient(135deg,#eef2ff,#e0e7ff) !important;
+  color:#4f46e5 !important;
+  font-weight:600;
+  box-shadow:0 2px 8px rgba(99,102,241,0.08);
+}
+
+/* ===== Progress ===== */
+.progress-track{
+  height:10px;
+  background:#f1f5f9;
+  border-radius:10px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  border-radius:10px;
+  background:linear-gradient(90deg,#6366f1,#8b5cf6,#a78bfa);
+  background-size:200% 100%;
+  animation:shimmer 2.5s linear infinite;
+  transition:width 1.2s cubic-bezier(.22,1,.36,1);
+}
+
+/* ===== Badge ===== */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.02em;
+}
+.badge-success{background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.badge-info{background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe}
+.badge-warning{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.badge-admin{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #fcd34d}
+.badge-student{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#3730a3;border:1px solid #a5b4fc}
+
+/* ===== Avatar ===== */
+.avatar{
+  width:42px;height:42px;
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:#fff;
+  flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.avatar-indigo{background:linear-gradient(135deg,#6366f1,#4f46e5)}
+.avatar-violet{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+.avatar-emerald{background:linear-gradient(135deg,#10b981,#059669)}
+.avatar-amber{background:linear-gradient(135deg,#f59e0b,#d97706)}
+
+/* ===== Gradient Text ===== */
+.gradient-text{
+  background:linear-gradient(135deg,#6366f1,#8b5cf6,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.gradient-text-warm{
+  background:linear-gradient(135deg,#f59e0b,#f43f5e);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* ===== Auth Blobs ===== */
+.blob{
+  position:absolute;
+  filter:blur(60px);
+  opacity:0.5;
+  animation:blob 8s ease-in-out infinite,float 6s ease-in-out infinite;
+}
+.blob-1{width:300px;height:300px;background:#c7d2fe;top:-50px;right:-50px;animation-delay:0s}
+.blob-2{width:250px;height:250px;background:#ddd6fe;bottom:-30px;left:-50px;animation-delay:2s}
+.blob-3{width:200px;height:200px;background:#bfdbfe;top:40%;left:30%;animation-delay:4s}
+
+/* ===== Stat Number Animation ===== */
+.stat-number{animation:countUp .6s cubic-bezier(.22,1,.36,1) both}
+
+/* ===== Notification Dot ===== */
+.notif-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#f43f5e;
+  position:absolute;top:8px;right:8px;
+}
+.notif-dot::after{
+  content:'';position:absolute;inset:-3px;
+  border-radius:50%;border:2px solid #f43f5e;
+  animation:pulseRing 1.5s ease-out infinite;
+}
+
+/* ===== Divider ===== */
+.divider{height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);margin:16px 0}
+
+/* ===== Page Transition Wrapper ===== */
+.page-enter{animation:slideUp .5s cubic-bezier(.22,1,.36,1) both}
+
+/* ===== Tooltip-style label ===== */
+.label{
+  display:block;
+  font-size:12px;font-weight:600;
+  color:#64748b;
+  margin-bottom:6px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
 }
 </style>
 </head>
 
-<body class="text-white">
+<body>
 <div id="root"></div>
 
 <script>
 const e = React.createElement;
 
-/* ================= AUTH ================= */
-function Auth({onLogin}){
-
-const [mode,setMode]=React.useState("login");
-const [role,setRole]=React.useState("student");
-const [name,setName]=React.useState("");
-const [email,setEmail]=React.useState("");
-const [password,setPassword]=React.useState("");
-
-function register(){
-if(!name||!email||!password) return alert("Fill all fields");
-localStorage.setItem("user_"+email,
-JSON.stringify({username:name,email,password,role}));
-alert("Account created ✅");
-setMode("login");
+/* ===== SVG Icon Component ===== */
+function Icon({path, size=20, className="", style={}}) {
+  return e("svg", {
+    width:size, height:size, viewBox:"0 0 24 24",
+    fill:"none", stroke:"currentColor", strokeWidth:"1.8",
+    strokeLinecap:"round", strokeLinejoin:"round",
+    className, style:{flexShrink:0,...style}
+  }, e("path",{d:path}));
 }
 
-function login(){
-const saved=localStorage.getItem("user_"+email);
-if(!saved) return alert("User not found");
-const user=JSON.parse(saved);
-if(user.password!==password) return alert("Wrong password");
-onLogin(user);
-}
-
-return e("div",{className:"h-screen flex justify-center items-center"},
-e("div",{className:"glass soft-card p-10 w-96"},
-
-e("h1",{className:"text-3xl text-center mb-6 font-bold text-cyan-400"},"InternHub"),
-
-e("select",{className:"w-full p-3 mb-3 bg-slate-900 soft-input",
-onChange:i=>setRole(i.target.value)},
-e("option",{value:"student"},"Student"),
-e("option",{value:"admin"},"Admin")
-),
-
-mode==="register" &&
-e("input",{placeholder:"Name",
-className:"w-full p-3 mb-3 bg-slate-900 soft-input",
-onChange:i=>setName(i.target.value)}),
-
-e("input",{placeholder:"Email",
-className:"w-full p-3 mb-3 bg-slate-900 soft-input",
-onChange:i=>setEmail(i.target.value)}),
-
-e("input",{type:"password",placeholder:"Password",
-className:"w-full p-3 mb-4 bg-slate-900 soft-input",
-onChange:i=>setPassword(i.target.value)}),
-
-mode==="login"
-? e("button",{onClick:login,className:"w-full py-3 bg-cyan-500 soft-btn"},"Login")
-: e("button",{onClick:register,className:"w-full py-3 bg-cyan-500 soft-btn"},"Register"),
-
-e("p",{className:"text-center mt-4 cursor-pointer text-cyan-400",
-onClick:()=>setMode(mode==="login"?"register":"login")},
-mode==="login"?"Create Account":"Back to Login")
-));
-}
-
-/* ================= DASHBOARD ================= */
-function Dashboard({jobs,apps,user,feedback,addFeedback}){
-
-const myApps=apps.filter(a=>a.email===user.email);
-const myFeedback=user.role==="admin"
-?feedback
-:feedback.filter(f=>f.email===user.email);
-
-const [selected,setSelected]=React.useState("");
-const [text,setText]=React.useState("");
-
-return e("div",{className:"p-8"},
-
-e("h2",{className:"text-3xl mb-8"},"Welcome "+user.username+" 👋"),
-
-e("div",{className:"grid grid-cols-3 gap-6 mb-8"},
-e("div",{className:"glass soft-card p-6"},"Internships: "+jobs.length),
-e("div",{className:"glass soft-card p-6"},
-user.role==="admin"
-?"Total Applications: "+apps.length
-:"Your Applications: "+myApps.length),
-e("div",{className:"glass soft-card p-6"},
-"Role: "+user.role.toUpperCase())
-),
-
-user.role==="admin" &&
-e("div",{className:"glass soft-card p-6 mb-6"},
-e("h3",{className:"mb-3"},"Give Feedback"),
-
-e("select",{className:"w-full p-3 bg-slate-900 soft-input mb-3",
-onChange:i=>setSelected(i.target.value)},
-e("option",{value:""},"Select Student"),
-...apps.map((a,i)=>e("option",{key:i,value:a.email},a.email))
-),
-
-e("textarea",{placeholder:"Write feedback...",
-className:"w-full p-3 bg-slate-900 soft-input mb-3",
-onChange:i=>setText(i.target.value)}),
-
-e("button",{className:"bg-cyan-500 px-6 soft-btn",
-onClick:()=>{
-if(!selected||!text) return;
-addFeedback({email:selected,text});
-setText("");
-}},
-"Submit")
-),
-
-e("div",{className:"glass soft-card p-6"},
-e("h3",{className:"mb-3"},"Feedback"),
-myFeedback.length===0
-? e("p",null,"No feedback yet")
-: myFeedback.map((f,i)=>
-e("div",{key:i,className:"bg-slate-900 p-3 rounded-xl mb-2"},
-f.email+" — "+f.text))
-)
-);
-}
-
-/* ================= INTERNSHIPS ================= */
-function Internships({user,jobs,setJobs,apps,setApps}){
-
-const [newJob,setNewJob]=React.useState("");
-
-function apply(job){
-if(apps.some(a=>a.job===job&&a.email===user.email)) return;
-setApps([...apps,{
-job,
-email:user.email,
-status:"Applied",
-progress:30
-}]);
-}
-
-return e("div",{className:"p-8"},
-
-e("h2",{className:"text-2xl mb-6"},"Internships"),
-
-user.role==="admin" &&
-e("div",{className:"flex gap-3 mb-6"},
-e("input",{placeholder:"Post Internship",
-className:"flex-1 p-3 bg-slate-900 soft-input",
-onChange:i=>setNewJob(i.target.value)}),
-e("button",{className:"bg-cyan-500 px-6 soft-btn",
-onClick:()=>{if(newJob)setJobs([...jobs,newJob]);}},
-"Post")
-),
-
-jobs.map(j=>
-e("div",{className:"glass soft-card glow p-4 mb-3 flex justify-between"},
-j,
-user.role==="student" &&
-(apps.some(a=>a.job===j&&a.email===user.email)
-? e("span",{className:"text-green-400"},"Applied ✓")
-: e("button",{className:"bg-cyan-500 px-4 soft-btn",
-onClick:()=>apply(j)},"Apply"))
-)
-));
-}
-
-/* ================= APPLICATIONS WITH TRACKING ================= */
-function Applications({apps,user,setApps}){
-
-const statusMap={
-"Applied":30,
-"Under Review":60,
-"Shortlisted":80,
-"Selected":100
+const icons = {
+  home:"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
+  briefcase:"M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16",
+  file:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8",
+  logout:"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9",
+  check:"M20 6L9 17l-5-5",
+  send:"M22 2L11 13 M22 2l-7 20-4-9-9-4z",
+  user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z",
+  users:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
+  star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+  clock:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 6v6l4 2",
+  plus:"M12 5v14 M5 12h14",
+  trending:"M23 6l-9.5 9.5-5-5L1 18",
+  zap:"M13 2L3 14h9l-1 8 10-12h-9l1-8z",
+  award:"M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 16.4 5.7 21l2.3-7L2 9.4h7.6L12 2z",
+  search:"M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16z M21 21l-4.35-4.35",
+  bell:"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0",
+  settings:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 8v4l3 3",
+  arrowRight:"M5 12h14 M12 5l7 7-7 7",
+  target:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z",
+  shield:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+  message:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
+  eye:"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
 };
 
-function updateStatus(index,newStatus){
-const updated=[...apps];
-updated[index].status=newStatus;
-updated[index].progress=statusMap[newStatus];
-setApps(updated);
+/* ===== Animated Counter ===== */
+function AnimNum({value}) {
+  const [display, setDisplay] = React.useState(0);
+  React.useEffect(()=>{
+    if(typeof value!=='number'){setDisplay(value);return}
+    let start=0;const dur=800;const startTime=Date.now();
+    function tick(){
+      const elapsed=Date.now()-startTime;
+      const prog=Math.min(elapsed/dur,1);
+      const eased=1-Math.pow(1-prog,3);
+      setDisplay(Math.round(eased*value));
+      if(prog<1) requestAnimationFrame(tick);
+    }
+    tick();
+  },[value]);
+  return e("span",{className:"stat-number"},display);
 }
 
-const list=user.role==="admin"
-?apps
-:apps.filter(a=>a.email===user.email);
+/* ===== AUTH ===== */
+function Auth({onLogin}) {
+  const [mode, setMode] = React.useState("login");
+  const [role, setRole] = React.useState("student");
+  const [name, setName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
-return e("div",{className:"p-8"},
+  function register() {
+    if(!name||!email||!password) return alert("Please fill in all fields");
+    localStorage.setItem("user_"+email,JSON.stringify({username:name,email,password,role}));
+    alert("Account created successfully!");
+    setMode("login");
+  }
 
-e("h2",{className:"text-2xl mb-6"},"Applications"),
+  function login() {
+    setLoading(true);
+    setTimeout(()=>{
+      const saved=localStorage.getItem("user_"+email);
+      if(!saved){setLoading(false);return alert("User not found")}
+      const user=JSON.parse(saved);
+      if(user.password!==password){setLoading(false);return alert("Incorrect password")}
+      onLogin(user);
+    },600);
+  }
 
-list.map((a,i)=>
-e("div",{key:i,className:"glass soft-card p-5 mb-5"},
+  return e("div",{className:"min-h-screen flex",style:{background:"linear-gradient(135deg,#f8fafc,#eef2ff,#f5f3ff)"}},
 
-e("p",{className:"font-semibold"},a.job+" — "+a.email),
+    /* ===== Left Panel ===== */
+    e("div",{className:"hidden lg:flex w-[45%] relative overflow-hidden flex-col justify-center items-center p-16",
+      style:{background:"linear-gradient(135deg,#4f46e5,#6366f1,#7c3aed)"}},
 
-e("div",{className:"w-full bg-slate-800 h-3 rounded-full mt-3"},
-e("div",{style:{width:a.progress+"%"},
-className:"h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"})
-),
+      /* Decorative blobs */
+      e("div",{className:"absolute w-80 h-80 rounded-full",
+        style:{background:"rgba(255,255,255,0.08)",top:"-10%",right:"-10%",animation:"blob 8s ease-in-out infinite,float 6s ease-in-out infinite"}}),
+      e("div",{className:"absolute w-60 h-60 rounded-full",
+        style:{background:"rgba(255,255,255,0.06)",bottom:"-5%",left:"-8%",animation:"blob 8s ease-in-out 2s infinite,float 6s ease-in-out 3s infinite"}}),
+      e("div",{className:"absolute w-40 h-40 rounded-full",
+        style:{background:"rgba(255,255,255,0.05)",top:"50%",left:"20%",animation:"blob 8s ease-in-out 4s infinite,float 6s ease-in-out 1s infinite"}}),
 
-e("p",{className:"text-sm mt-2 text-cyan-300"},
-"Status: "+a.status+" ("+a.progress+"%)"),
+      /* Pattern dots */
+      e("div",{className:"absolute inset-0 opacity-[0.04]",
+        style:{backgroundImage:"radial-gradient(circle,#fff 1px,transparent 1px)",backgroundSize:"24px 24px"}}),
 
-user.role==="admin" &&
-e("select",{className:"mt-3 p-2 bg-slate-900 soft-input",
-onChange:i=>updateStatus(i.target.value?i.target.selectedIndex-1:i,i.target.value)},
-["Applied","Under Review","Shortlisted","Selected"]
-.map(s=>e("option",{value:s},s)))
-))
-);
+      e("div",{className:"relative z-10 text-center anim-fadeIn"},
+
+        /* Logo mark */
+        e("div",{className:"mx-auto w-16 h-16 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center mb-8",
+          style:{animation:"floatSlow 4s ease-in-out infinite"}},
+          e(Icon,{path:icons.zap,size:28,className:"text-white"})
+        ),
+
+        e("h1",{className:"text-5xl font-extrabold text-white mb-4 tracking-tight"},"InternHub"),
+        e("p",{className:"text-lg text-indigo-100 font-light leading-relaxed max-w-md mx-auto"},
+          "Your gateway to professional internship opportunities. Connect with top companies, build your portfolio, and launch your career."),
+
+        /* Stats row */
+        e("div",{className:"mt-12 flex gap-8 justify-center"},
+          [{n:"500+",l:"Internships"},{n:"2,000+",l:"Students"},{n:"98%",l:"Placement"}].map((s,i)=>
+            e("div",{key:i,className:"text-center anim-slideUp",style:{animationDelay:(0.2+i*0.15)+"s"}},
+              e("div",{className:"text-3xl font-bold text-white"},s.n),
+              e("div",{className:"text-sm text-indigo-200 mt-1 font-medium"},s.l))
+          )
+        ),
+
+        /* Testimonial pill */
+        e("div",{className:"mt-12 bg-white/10 backdrop-blur-sm rounded-2xl p-4 max-w-sm mx-auto anim-slideUp border border-white/10",
+          style:{animationDelay:"0.7s"}},
+          e("p",{className:"text-indigo-100 text-sm italic"},'"InternHub helped me land my dream internship at a Fortune 500 company!"'),
+          e("p",{className:"text-indigo-200 text-xs mt-2 font-medium"},"- Sarah K., Computer Science")
+        )
+      )
+    ),
+
+    /* ===== Right Form Panel ===== */
+    e("div",{className:"flex-1 flex justify-center items-center p-6 lg:p-12"},
+      e("div",{className:"w-full max-w-md"},
+
+        /* Mobile logo */
+        e("div",{className:"lg:hidden text-center mb-8 anim-fadeIn"},
+          e("div",{className:"mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mb-4 shadow-lg"},
+            e(Icon,{path:icons.zap,size:24,className:"text-white"})
+          ),
+          e("h1",{className:"text-3xl font-bold gradient-text"},"InternHub"),
+          e("p",{className:"text-slate-400 mt-1 text-sm"},"Professional Internship Platform")
+        ),
+
+        e("div",{className:"bg-white rounded-3xl p-8 lg:p-10 shadow-card anim-scaleIn border border-slate-100/50"},
+
+          e("h2",{className:"text-2xl font-bold text-slate-800 mb-1"},
+            mode==="login"?"Welcome back":"Get started"),
+          e("p",{className:"text-slate-400 mb-8 text-[15px]"},
+            mode==="login"?"Sign in to access your dashboard":"Create your free account today"),
+
+          /* Role selector */
+          e("div",{className:"mb-5"},
+            e("div",{className:"label"},"I am a"),
+            e("div",{className:"grid grid-cols-2 gap-3"},
+              ["student","admin"].map(r=>
+                e("button",{key:r,
+                  onClick:()=>setRole(r),
+                  className:"p-3 rounded-xl text-sm font-semibold border-2 transition-all duration-200 capitalize "
+                    +(role===r
+                      ?"border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
+                      :"border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+                },
+                  e("span",{className:"flex items-center justify-center gap-2"},
+                    e(Icon,{path:r==="student"?icons.award:icons.shield,size:16}),
+                    r)
+                )
+              )
+            )
+          ),
+
+          mode==="register"&&
+          e("div",{className:"mb-5 anim-slideUp"},
+            e("div",{className:"label"},"Full Name"),
+            e("input",{placeholder:"John Doe",className:"input",value:name,
+              onChange:i=>setName(i.target.value)})
+          ),
+
+          e("div",{className:"mb-5"},
+            e("div",{className:"label"},"Email Address"),
+            e("input",{placeholder:"you@example.com",className:"input",type:"email",value:email,
+              onChange:i=>setEmail(i.target.value)})
+          ),
+
+          e("div",{className:"mb-7"},
+            e("div",{className:"label"},"Password"),
+            e("input",{type:"password",placeholder:"Enter your password",className:"input",value:password,
+              onChange:i=>setPassword(i.target.value)})
+          ),
+
+          mode==="login"
+            ? e("button",{onClick:login,className:"btn-primary w-full py-3.5 text-[15px] flex items-center justify-center gap-2",disabled:loading},
+                loading
+                  ? e("span",{className:"inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full",style:{animation:"spin .6s linear infinite"}})
+                  : e(React.Fragment,null,"Sign In ",e(Icon,{path:icons.arrowRight,size:16}))
+              )
+            : e("button",{onClick:register,className:"btn-primary w-full py-3.5 text-[15px]"},"Create Account"),
+
+          e("div",{className:"divider"}),
+
+          e("p",{className:"text-center text-sm text-slate-400"},
+            mode==="login"?"Don't have an account? ":"Already have an account? ",
+            e("span",{className:"text-indigo-600 cursor-pointer font-semibold hover:text-indigo-700 transition-colors",
+              onClick:()=>setMode(mode==="login"?"register":"login")},
+              mode==="login"?"Sign up free":"Sign in")
+          )
+        )
+      )
+    )
+  );
 }
 
-/* ================= APP ================= */
-function App(){
+/* ===== DASHBOARD ===== */
+function Dashboard({jobs, apps, user, feedback}) {
+  const myApps = apps.filter(a=>a.email===user.email);
+  const myFeedback = feedback.filter(f=>f.email===user.email);
 
-const [user,setUser]=React.useState(null);
-const [tab,setTab]=React.useState("dashboard");
+  let progress = user.role==="student"
+    ? Math.min(100,(myApps.length/jobs.length)*100||0)
+    : Math.min(100,(apps.length/(jobs.length*2))*100||0);
 
-const [jobs,setJobs]=React.useState([
-"Frontend Developer Intern",
-"Automation Intern",
-"React Developer Intern"
-]);
+  const hour = new Date().getHours();
+  const greeting = hour<12?"Good Morning":hour<17?"Good Afternoon":"Good Evening";
+  const dateStr = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-const [apps,setApps]=React.useState([]);
-const [feedback,setFeedback]=React.useState([]);
+  const isAdmin = user.role==="admin";
 
-function addFeedback(f){
-setFeedback([...feedback,f]);
+  const studentStats = [
+    {label:"Available Internships", value:jobs.length, accent:"indigo", icon:icons.briefcase, change:"+3 this week"},
+    {label:"Your Applications",     value:myApps.length, accent:"violet", icon:icons.file, change:"Keep applying!"},
+    {label:"Completion Rate",       value:Math.floor(progress)+"%", accent:"emerald", icon:icons.target, change:"Great progress"},
+  ];
+
+  const adminStats = [
+    {label:"Total Internships", value:jobs.length, accent:"indigo", icon:icons.briefcase, change:"Manage positions"},
+    {label:"Total Applications",value:apps.length, accent:"violet", icon:icons.file, change:"Review pending"},
+    {label:"Active Students",   value:new Set(apps.map(a=>a.email)).size, accent:"emerald", icon:icons.users, change:"Growing network"},
+  ];
+
+  const stats = isAdmin ? adminStats : studentStats;
+
+  const accentColors = {
+    indigo:{bg:"#eef2ff",fg:"#4f46e5",light:"#e0e7ff"},
+    violet:{bg:"#f5f3ff",fg:"#7c3aed",light:"#ede9fe"},
+    emerald:{bg:"#ecfdf5",fg:"#059669",light:"#d1fae5"},
+  };
+
+  return e("div",{className:"p-6 lg:p-8 max-w-6xl mx-auto"},
+
+    /* Header */
+    e("div",{className:"flex flex-col md:flex-row md:items-center md:justify-between mb-8 anim-slideUp"},
+      e("div",null,
+        e("h2",{className:"text-3xl font-bold text-slate-800 mb-1"},
+          greeting+", ",
+          e("span",{className:"gradient-text"},user.username)),
+        e("p",{className:"text-slate-400 text-sm flex items-center gap-2"},
+          e(Icon,{path:icons.clock,size:14}),dateStr)
+      ),
+      e("div",{className:"flex items-center gap-3 mt-4 md:mt-0"},
+        e("span",{className:isAdmin?"badge badge-admin":"badge badge-student"},
+          e(Icon,{path:isAdmin?icons.shield:icons.award,size:13}),
+          isAdmin?"Admin":"Student"
+        )
+      )
+    ),
+
+    /* Stats Grid */
+    e("div",{className:"grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"},
+      stats.map((s,i)=>{
+        const ac = accentColors[s.accent];
+        return e("div",{key:i,
+          className:"card p-6 anim-slideUp card-accent-"+s.accent,
+          style:{animationDelay:(0.1+i*0.1)+"s"}},
+          e("div",{className:"flex items-center justify-between mb-4"},
+            e("div",{className:"w-11 h-11 rounded-xl flex items-center justify-center",
+              style:{background:ac.bg}},
+              e(Icon,{path:s.icon,size:20,style:{color:ac.fg}})
+            ),
+            e("span",{className:"text-xs font-medium text-slate-400 flex items-center gap-1"},
+              e(Icon,{path:icons.trending,size:12}),s.change)
+          ),
+          e("div",{className:"text-3xl font-bold mb-1",style:{color:ac.fg}},
+            typeof s.value==="number"?e(AnimNum,{value:s.value}):s.value
+          ),
+          e("p",{className:"text-slate-500 text-sm font-medium"},s.label)
+        );
+      })
+    ),
+
+    /* Progress Section */
+    e("div",{className:"card p-6 mb-8 anim-slideUp",style:{animationDelay:"0.4s"}},
+      e("div",{className:"flex flex-col sm:flex-row sm:items-center justify-between mb-5"},
+        e("div",null,
+          e("h3",{className:"text-lg font-bold text-slate-800 flex items-center gap-2"},
+            e(Icon,{path:icons.trending,size:18,className:"text-indigo-500"}),
+            isAdmin?"Platform Activity":"Your Journey Progress"),
+          e("p",{className:"text-slate-400 text-sm mt-1"},
+            isAdmin?"Overall platform engagement":"Track your internship application progress")
+        ),
+        e("div",{className:"text-right mt-3 sm:mt-0"},
+          e("span",{className:"text-3xl font-bold gradient-text"},Math.floor(progress)+"%"),
+          e("p",{className:"text-xs text-slate-400 mt-1"},isAdmin?"Engagement rate":"Completion")
+        )
+      ),
+      e("div",{className:"progress-track"},
+        e("div",{className:"progress-fill",style:{width:progress+"%"}})
+      )
+    ),
+
+    /* Quick Actions - Admin */
+    isAdmin &&
+    e("div",{className:"grid grid-cols-1 md:grid-cols-2 gap-5 mb-8"},
+      e("div",{className:"card p-6 anim-slideUp",style:{animationDelay:"0.5s"}},
+        e("h3",{className:"text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"},
+          e(Icon,{path:icons.eye,size:18,className:"text-violet-500"}),
+          "Recent Applications"),
+        apps.length===0
+          ? e("p",{className:"text-slate-400 text-sm py-4 text-center"},"No applications received yet")
+          : apps.slice(-3).reverse().map((a,i)=>
+              e("div",{key:i,className:"flex items-center gap-3 py-3 "+(i>0?"border-t border-slate-100":"")},
+                e("div",{className:"avatar avatar-violet",style:{width:36,height:36,fontSize:13,borderRadius:10}},a.email.charAt(0).toUpperCase()),
+                e("div",{className:"flex-1 min-w-0"},
+                  e("p",{className:"text-sm font-semibold text-slate-700 truncate"},a.email),
+                  e("p",{className:"text-xs text-slate-400"},a.job)
+                ),
+                e("span",{className:"badge badge-success text-[11px]"},"New")
+              )
+            )
+      ),
+      e("div",{className:"card p-6 anim-slideUp",style:{animationDelay:"0.6s"}},
+        e("h3",{className:"text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"},
+          e(Icon,{path:icons.message,size:18,className:"text-emerald-500"}),
+          "Quick Stats"),
+        e("div",{className:"space-y-4"},
+          [{l:"Total Feedback Sent",v:feedback.length,c:"#6366f1"},
+           {l:"Unique Applicants",v:new Set(apps.map(a=>a.email)).size,c:"#8b5cf6"},
+           {l:"Open Positions",v:jobs.length,c:"#10b981"}].map((q,i)=>
+            e("div",{key:i,className:"flex items-center justify-between"},
+              e("span",{className:"text-sm text-slate-500"},q.l),
+              e("span",{className:"text-lg font-bold",style:{color:q.c}},q.v)
+            )
+          )
+        )
+      )
+    ),
+
+    /* Feedback - Student */
+    !isAdmin &&
+    e("div",{className:"card p-6 anim-slideUp",style:{animationDelay:"0.5s"}},
+      e("h3",{className:"text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"},
+        e(Icon,{path:icons.star,size:18,className:"text-amber-500"}),
+        "Feedback from Admins"),
+      myFeedback.length===0
+        ? e("div",{className:"text-center py-10"},
+            e("div",{className:"w-16 h-16 rounded-2xl bg-slate-50 mx-auto flex items-center justify-center mb-4"},
+              e(Icon,{path:icons.message,size:28,className:"text-slate-300"})),
+            e("p",{className:"text-slate-400 font-medium"},"No feedback yet"),
+            e("p",{className:"text-slate-300 text-sm mt-1"},"Your admin feedback will appear here"))
+        : e("div",{className:"space-y-3"},
+            myFeedback.map((f,i)=>
+              e("div",{key:i,className:"bg-emerald-50 border border-emerald-100 rounded-xl p-4 anim-slideUp flex items-start gap-3",
+                style:{animationDelay:(i*0.1)+"s"}},
+                e("div",{className:"w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5"},
+                  e(Icon,{path:icons.check,size:14,className:"text-emerald-600"})),
+                e("p",{className:"text-emerald-800 text-sm font-medium leading-relaxed"},f.text)
+              )
+            ))
+    )
+  );
 }
 
-if(!user) return e(Auth,{onLogin:setUser});
+/* ===== INTERNSHIPS ===== */
+function Internships({user, jobs, setJobs, apps, setApps, addFeedback}) {
+  const [newJob, setNewJob] = React.useState("");
+  const [selected, setSelected] = React.useState("");
+  const [text, setText] = React.useState("");
+  const [justApplied, setJustApplied] = React.useState(null);
 
-return e("div",{className:"flex h-screen"},
+  function apply(job) {
+    if(apps.some(a=>a.job===job&&a.email===user.email)) return;
+    setApps([...apps,{job,email:user.email}]);
+    setJustApplied(job);
+    setTimeout(()=>setJustApplied(null),2000);
+  }
 
-e("div",{className:"w-64 p-6 flex flex-col bg-slate-950 border-r border-slate-800"},
-e("h1",{className:"text-xl font-bold mb-10 text-cyan-400"},"InternHub"),
+  const isAdmin = user.role==="admin";
 
-["dashboard","internships","applications"].map(t =>
-e("div",{key:t,onClick:()=>setTab(t),
-className:"p-3 mb-2 cursor-pointer rounded-xl hover:bg-slate-800 capitalize"},t)
-),
+  return e("div",{className:"p-6 lg:p-8 max-w-6xl mx-auto"},
 
-e("button",{className:"mt-auto bg-red-500 py-2 soft-btn",
-onClick:()=>setUser(null)},"Logout")
-),
+    /* Header */
+    e("div",{className:"flex flex-col md:flex-row md:items-end md:justify-between mb-8 anim-slideUp"},
+      e("div",null,
+        e("h2",{className:"text-3xl font-bold text-slate-800 mb-1"},
+          isAdmin?"Manage Internships":"Explore Internships"),
+        e("p",{className:"text-slate-400 text-sm"},
+          isAdmin?"Post and manage opportunities for students":"Discover and apply to your next opportunity")
+      ),
+      isAdmin && e("span",{className:"badge badge-info mt-3 md:mt-0"},jobs.length+" positions")
+    ),
 
-e("div",{className:"flex-1 overflow-auto"},
-tab==="dashboard" && e(Dashboard,{jobs,apps,user,feedback,addFeedback}),
-tab==="internships" && e(Internships,{user,jobs,setJobs,apps,setApps}),
-tab==="applications" && e(Applications,{apps,user,setApps})
-)
-);
+    /* Admin Post */
+    isAdmin &&
+    e("div",{className:"card p-5 mb-8 anim-slideUp",style:{animationDelay:"0.1s"}},
+      e("div",{className:"flex items-center gap-2 mb-4"},
+        e(Icon,{path:icons.plus,size:18,className:"text-indigo-500"}),
+        e("h3",{className:"font-bold text-slate-700"},"Post New Internship")
+      ),
+      e("div",{className:"flex gap-3"},
+        e("input",{placeholder:"e.g. Frontend Developer Intern",className:"input flex-1",
+          value:newJob,onChange:i=>setNewJob(i.target.value),
+          onKeyDown:ev=>{if(ev.key==="Enter"&&newJob){setJobs([...jobs,newJob]);setNewJob("")}}
+        }),
+        e("button",{className:"btn-primary flex items-center gap-2 whitespace-nowrap",
+          onClick:()=>{if(newJob){setJobs([...jobs,newJob]);setNewJob("")}}},
+          e(Icon,{path:icons.plus,size:16}),"Post")
+      )
+    ),
+
+    /* Job Grid */
+    e("div",{className:"grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"},
+      jobs.map((j,idx)=>{
+        const applied = apps.some(a=>a.job===j&&a.email===user.email);
+        const isNew = justApplied===j;
+        return e("div",{key:idx,
+          className:"card p-5 anim-slideUp "+(isNew?"ring-2 ring-emerald-400 ring-offset-2":""),
+          style:{animationDelay:(idx*0.06)+"s"}},
+          e("div",{className:"flex items-start gap-4"},
+            e("div",{className:"w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0",
+              style:{background:["#eef2ff","#f5f3ff","#ecfdf5","#fefce8","#fef2f2"][idx%5]}},
+              e(Icon,{path:icons.briefcase,size:22,
+                style:{color:["#4f46e5","#7c3aed","#059669","#d97706","#e11d48"][idx%5]}})
+            ),
+            e("div",{className:"flex-1 min-w-0"},
+              e("h3",{className:"font-bold text-slate-800 text-[15px] mb-1"},j),
+              e("div",{className:"flex flex-wrap items-center gap-2 mb-3"},
+                e("span",{className:"text-xs text-slate-400 flex items-center gap-1"},
+                  e(Icon,{path:icons.clock,size:11}),"Full-time"),
+                e("span",{className:"text-xs text-slate-400"},"Remote Friendly")
+              ),
+              !isAdmin &&
+              (applied
+                ? e("span",{className:"badge badge-success flex items-center gap-1 w-fit"},
+                    e(Icon,{path:icons.check,size:12}),"Applied")
+                : e("button",{className:"btn-primary text-xs py-2 px-5",onClick:()=>apply(j)},
+                    "Apply Now"))
+            )
+          )
+        );
+      })
+    ),
+
+    /* Admin Feedback */
+    isAdmin &&
+    e("div",{className:"card p-6 anim-slideUp",style:{animationDelay:"0.3s"}},
+      e("div",{className:"flex items-center gap-2 mb-6"},
+        e("div",{className:"w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center"},
+          e(Icon,{path:icons.message,size:18,className:"text-indigo-500"})
+        ),
+        e("div",null,
+          e("h3",{className:"font-bold text-slate-800"},"Student Feedback"),
+          e("p",{className:"text-xs text-slate-400"},"Send feedback to students who applied")
+        )
+      ),
+
+      e("div",{className:"grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"},
+        e("div",null,
+          e("div",{className:"label"},"Select Student"),
+          e("select",{className:"input",value:selected,
+            onChange:i=>setSelected(i.target.value)},
+            e("option",{value:""},"Choose a student..."),
+            [...new Set(apps.map(a=>a.email))].map(em=>e("option",{key:em,value:em},em))
+          )
+        ),
+        e("div",null,
+          e("div",{className:"label"},"Feedback Type"),
+          e("select",{className:"input"},
+            e("option",null,"General Feedback"),
+            e("option",null,"Performance Review"),
+            e("option",null,"Improvement Suggestion")
+          )
+        )
+      ),
+
+      e("div",{className:"mb-4"},
+        e("div",{className:"label"},"Message"),
+        e("textarea",{placeholder:"Write constructive feedback...",className:"input",
+          rows:4,style:{resize:"vertical"},value:text,
+          onChange:i=>setText(i.target.value)})
+      ),
+
+      e("div",{className:"flex justify-end"},
+        e("button",{className:"btn-primary flex items-center gap-2",
+          onClick:()=>{if(selected&&text){addFeedback({email:selected,text});setText("");setSelected("")}}},
+          e(Icon,{path:icons.send,size:16}),"Send Feedback")
+      )
+    )
+  );
+}
+
+/* ===== APPLICATIONS ===== */
+function Applications({apps, user}) {
+  const isAdmin = user.role==="admin";
+  const list = isAdmin?apps:apps.filter(a=>a.email===user.email);
+
+  return e("div",{className:"p-6 lg:p-8 max-w-6xl mx-auto"},
+
+    /* Header */
+    e("div",{className:"flex flex-col md:flex-row md:items-end md:justify-between mb-8 anim-slideUp"},
+      e("div",null,
+        e("h2",{className:"text-3xl font-bold text-slate-800 mb-1"},
+          isAdmin?"All Applications":"My Applications"),
+        e("p",{className:"text-slate-400 text-sm"},
+          isAdmin?"Review and manage student applications":"Track your submitted applications")
+      ),
+      list.length>0 &&
+      e("span",{className:"badge badge-info mt-3 md:mt-0"},list.length+" application"+(list.length!==1?"s":""))
+    ),
+
+    /* Empty State */
+    list.length===0
+      ? e("div",{className:"card p-16 text-center anim-scaleIn"},
+          e("div",{className:"w-20 h-20 rounded-3xl bg-slate-50 mx-auto flex items-center justify-center mb-6"},
+            e(Icon,{path:icons.file,size:36,className:"text-slate-300"})
+          ),
+          e("h3",{className:"text-xl font-bold text-slate-700 mb-2"},"No applications yet"),
+          e("p",{className:"text-slate-400 max-w-sm mx-auto"},
+            isAdmin
+              ?"Applications from students will appear here once they start applying."
+              :"Start exploring internships and apply to begin your journey!")
+        )
+
+      /* List */
+      : e("div",{className:"space-y-3"},
+          list.map((a,i)=>{
+            const colors = ["indigo","violet","emerald","amber","rose"];
+            const col = colors[i%colors.length];
+            return e("div",{key:i,className:"card p-5 flex items-center gap-4 anim-slideUp",
+              style:{animationDelay:(i*0.06)+"s"}},
+              e("div",{className:"avatar avatar-"+col,
+                style:{width:44,height:44,borderRadius:14,fontSize:15}},
+                a.email.charAt(0).toUpperCase()
+              ),
+              e("div",{className:"flex-1 min-w-0"},
+                e("h3",{className:"font-bold text-slate-800"},a.job),
+                e("p",{className:"text-sm text-slate-400 mt-0.5 truncate"},a.email)
+              ),
+              e("div",{className:"flex items-center gap-3"},
+                e("span",{className:"badge badge-success"},"Submitted"),
+                isAdmin &&
+                e("span",{className:"badge badge-warning"},"Pending Review")
+              )
+            );
+          })
+        )
+  );
+}
+
+/* ===== APP SHELL ===== */
+function App() {
+  const [user, setUser] = React.useState(null);
+  const [tab, setTab] = React.useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+
+  const [jobs, setJobs] = React.useState([
+    "Frontend Developer Intern",
+    "Backend Engineer Intern",
+    "UI/UX Design Intern",
+    "Data Analyst Intern",
+    "DevOps Intern"
+  ]);
+  const [apps, setApps] = React.useState([]);
+  const [feedback, setFeedback] = React.useState([]);
+
+  function addFeedback(f){setFeedback([...feedback,f])}
+
+  if(!user) return e(Auth,{onLogin:setUser});
+
+  const isAdmin = user.role==="admin";
+
+  const navItems = [
+    {id:"dashboard", label:"Dashboard", icon:icons.home},
+    {id:"internships", label:"Internships", icon:icons.briefcase},
+    {id:"applications", label:"Applications", icon:icons.file, count:isAdmin?apps.length:apps.filter(a=>a.email===user.email).length},
+  ];
+
+  return e("div",{className:"flex h-screen",style:{background:"#f7f8fc"}},
+
+    /* ===== Sidebar ===== */
+    e("div",{className:"sidebar w-[280px] p-5 flex flex-col h-screen sticky top-0 anim-slideRight"},
+
+      /* Brand */
+      e("div",{className:"flex items-center gap-3 mb-8 px-2"},
+        e("div",{className:"w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-200"},
+          e(Icon,{path:icons.zap,size:18,className:"text-white"})
+        ),
+        e("div",null,
+          e("h1",{className:"text-lg font-bold text-slate-800"},"InternHub"),
+          e("p",{className:"text-[11px] text-slate-400 font-medium -mt-0.5"},isAdmin?"Admin Panel":"Student Portal")
+        )
+      ),
+
+      /* Search */
+      e("div",{className:"relative mb-6 px-1"},
+        e("div",{className:"absolute left-4 top-1/2 -translate-y-1/2"},
+          e(Icon,{path:icons.search,size:15,className:"text-slate-300"})
+        ),
+        e("input",{placeholder:"Search...",
+          className:"w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm text-slate-600 outline-none focus:border-indigo-200 focus:bg-white transition-all",
+        })
+      ),
+
+      /* Nav Items */
+      e("nav",{className:"flex-1 px-1"},
+        e("p",{className:"text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-3 px-3"},"Menu"),
+        navItems.map(item=>
+          e("div",{key:item.id,
+            onClick:()=>setTab(item.id),
+            className:"sidebar-item"+(tab===item.id?" sidebar-item-active":"")},
+            e(Icon,{path:item.icon,size:18}),
+            e("span",{className:"flex-1"},item.label),
+            item.count>0 &&
+            e("span",{className:"text-xs font-bold px-2 py-0.5 rounded-full "
+              +(tab===item.id?"bg-indigo-100 text-indigo-600":"bg-slate-100 text-slate-500")},
+              item.count)
+          )
+        )
+      ),
+
+      /* User section */
+      e("div",{className:"border-t border-slate-100 pt-4 mt-2 px-1"},
+        e("div",{className:"flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer mb-3"},
+          e("div",{className:"avatar "+(isAdmin?"avatar-amber":"avatar-indigo"),
+            style:{width:40,height:40,borderRadius:12,fontSize:15}},
+            user.username.charAt(0).toUpperCase()
+          ),
+          e("div",{className:"flex-1 min-w-0"},
+            e("p",{className:"text-sm font-semibold text-slate-700 truncate"},user.username),
+            e("p",{className:"text-xs text-slate-400 capitalize"},user.role)
+          ),
+          e("span",{className:isAdmin?"badge badge-admin text-[10px]":"badge badge-student text-[10px]"},
+            isAdmin?"Admin":"Student")
+        ),
+        e("button",{className:"w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-rose-500 bg-rose-50 hover:bg-rose-100 transition-all cursor-pointer border border-rose-100",
+          onClick:()=>setUser(null)},
+          e(Icon,{path:icons.logout,size:15}),
+          "Sign Out"
+        )
+      )
+    ),
+
+    /* ===== Main Content ===== */
+    e("div",{className:"flex-1 overflow-auto",key:tab},
+      e("div",{className:"page-enter"},
+        tab==="dashboard"   && e(Dashboard,{jobs,apps,user,feedback}),
+        tab==="internships" && e(Internships,{user,jobs,setJobs,apps,setApps,addFeedback}),
+        tab==="applications"&& e(Applications,{apps,user})
+      )
+    )
+  );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(e(App));
