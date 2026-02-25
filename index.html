@@ -2,78 +2,34 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>InternHub</title>
+<title>InternHub Final</title>
 
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
 body{
-margin:0;
-font-family:Segoe UI;
-background:
-radial-gradient(circle at 20% 20%, #0ea5e920 0%, transparent 40%),
-radial-gradient(circle at 80% 10%, #38bdf820 0%, transparent 40%),
-linear-gradient(135deg,#020617,#020617,#0f172a);
-color:white;
+background:radial-gradient(circle at top,#020617,#020617,#0f172a);
 }
-
-/* LOGIN */
-.loginWrap{display:flex;justify-content:center;align-items:center;height:100vh;}
-.card{background:#1e293b;padding:28px;border-radius:18px;width:340px;}
-input,select,textarea{
-width:100%;padding:12px;margin:10px 0;border-radius:12px;
-border:1px solid #334155;background:#020617;color:white;
+.glass{
+background:rgba(15,23,42,.65);
+backdrop-filter:blur(18px);
+border:1px solid rgba(56,189,248,.25);
+box-shadow:0 10px 40px rgba(0,0,0,.4);
 }
-button{
-background:linear-gradient(135deg,#38bdf8,#0ea5e9);
-border:none;padding:10px;border-radius:12px;color:white;
-cursor:pointer;width:100%;
-}
-.linkBtn{background:none;margin-top:8px;color:#38bdf8}
-.error{color:#ff6b6b}
-
-/* LAYOUT */
-.container{display:flex;height:100vh;}
-.sidebar{
-width:250px;background:#020617cc;padding:20px;
-border-right:1px solid #1e293b;
-display:flex;flex-direction:column;
-}
-.profileTop{
-display:flex;align-items:center;gap:12px;
-margin-bottom:25px;border-bottom:1px solid #1e293b;
-padding-bottom:15px;
-}
-.avatar{
-width:45px;height:45px;border-radius:50%;
-background:#38bdf8;
-display:flex;align-items:center;justify-content:center;
-font-weight:bold;
-}
-.menu{padding:10px;border-radius:10px;cursor:pointer;margin-bottom:6px;}
-.menu:hover{background:#1e293b;color:#38bdf8;}
-.logoutBtn{margin-top:auto;}
-.main{flex:1;padding:30px;overflow:auto;}
-
-.cardBox{
-background:#1e293bcc;
-padding:22px;border-radius:18px;margin-bottom:22px;
-}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-.stat{background:#0f172a;padding:20px;border-radius:14px;}
-.job{background:#0f172a;padding:14px;border-radius:12px;margin-top:10px;}
-.bigAvatar{
-width:90px;height:90px;border-radius:50%;
-background:#38bdf8;
-display:flex;align-items:center;justify-content:center;
-font-size:34px;margin:auto;margin-bottom:15px;
-font-weight:bold;
+.soft-card{border-radius:26px;}
+.soft-btn{border-radius:16px;}
+.soft-input{border-radius:18px;}
+.glow:hover{
+transform:translateY(-4px);
+box-shadow:0 0 35px rgba(56,189,248,.35);
+transition:.3s;
 }
 </style>
 </head>
 
-<body>
+<body class="text-white">
 <div id="root"></div>
 
 <script>
@@ -87,54 +43,53 @@ const [role,setRole]=React.useState("student");
 const [name,setName]=React.useState("");
 const [email,setEmail]=React.useState("");
 const [password,setPassword]=React.useState("");
-const [error,setError]=React.useState("");
-
-function reset(){
-setName("");setEmail("");setPassword("");setError("");
-}
 
 function register(){
-if(!name||!email||password.length<4)
-return setError("Fill all fields correctly");
-
-localStorage.setItem(
-"user_"+email,
-JSON.stringify({username:name,email,password,role})
-);
-
+if(!name||!email||!password) return alert("Fill all fields");
+localStorage.setItem("user_"+email,
+JSON.stringify({username:name,email,password,role}));
 alert("Account created ✅");
 setMode("login");
-reset();
 }
 
 function login(){
 const saved=localStorage.getItem("user_"+email);
-if(!saved) return setError("Account not found");
+if(!saved) return alert("User not found");
 const user=JSON.parse(saved);
-if(user.password!==password) return setError("Wrong password");
+if(user.password!==password) return alert("Wrong password");
 onLogin(user);
 }
 
-return e("div",{className:"loginWrap"},
-e("div",{className:"card"},
-e("h2",null,mode==="login"?"InternHub Login":"Create Account"),
-error && e("p",{className:"error"},error),
+return e("div",{className:"h-screen flex justify-center items-center"},
+e("div",{className:"glass soft-card p-10 w-96"},
 
-e("select",{value:role,onChange:i=>setRole(i.target.value)},
+e("h1",{className:"text-3xl text-center mb-6 font-bold text-cyan-400"},"InternHub"),
+
+e("select",{className:"w-full p-3 mb-3 bg-slate-900 soft-input",
+onChange:i=>setRole(i.target.value)},
 e("option",{value:"student"},"Student"),
 e("option",{value:"admin"},"Admin")
 ),
 
-e("input",{placeholder:"Name",value:name,onChange:i=>setName(i.target.value)}),
-e("input",{placeholder:"Email",value:email,onChange:i=>setEmail(i.target.value)}),
-e("input",{type:"password",placeholder:"Password",value:password,onChange:i=>setPassword(i.target.value)}),
+mode==="register" &&
+e("input",{placeholder:"Name",
+className:"w-full p-3 mb-3 bg-slate-900 soft-input",
+onChange:i=>setName(i.target.value)}),
+
+e("input",{placeholder:"Email",
+className:"w-full p-3 mb-3 bg-slate-900 soft-input",
+onChange:i=>setEmail(i.target.value)}),
+
+e("input",{type:"password",placeholder:"Password",
+className:"w-full p-3 mb-4 bg-slate-900 soft-input",
+onChange:i=>setPassword(i.target.value)}),
 
 mode==="login"
-? e("button",{onClick:login},"Login")
-: e("button",{onClick:register},"Register"),
+? e("button",{onClick:login,className:"w-full py-3 bg-cyan-500 soft-btn"},"Login")
+: e("button",{onClick:register,className:"w-full py-3 bg-cyan-500 soft-btn"},"Register"),
 
-e("button",{className:"linkBtn",
-onClick:()=>{setMode(mode==="login"?"register":"login");reset();}},
+e("p",{className:"text-center mt-4 cursor-pointer text-cyan-400",
+onClick:()=>setMode(mode==="login"?"register":"login")},
 mode==="login"?"Create Account":"Back to Login")
 ));
 }
@@ -144,103 +99,151 @@ function Dashboard({jobs,apps,user,feedback,addFeedback}){
 
 const myApps=apps.filter(a=>a.email===user.email);
 const myFeedback=user.role==="admin"
-? feedback
-: feedback.filter(f=>f.email===user.email);
+?feedback
+:feedback.filter(f=>f.email===user.email);
 
 const [selected,setSelected]=React.useState("");
 const [text,setText]=React.useState("");
 
-return e("div",null,
+return e("div",{className:"p-8"},
 
-e("div",{className:"cardBox"},
-e("h2",null,"Welcome, "+user.username+" 👋")
-),
+e("h2",{className:"text-3xl mb-8"},"Welcome "+user.username+" 👋"),
 
-e("div",{className:"grid"},
-e("div",{className:"stat"},"Internships: "+jobs.length),
-e("div",{className:"stat"},
+e("div",{className:"grid grid-cols-3 gap-6 mb-8"},
+e("div",{className:"glass soft-card p-6"},"Internships: "+jobs.length),
+e("div",{className:"glass soft-card p-6"},
 user.role==="admin"
-? "Total Applications: "+apps.length
-: "Your Applications: "+myApps.length),
-e("div",{className:"stat"},"Role: "+user.role.toUpperCase())
+?"Total Applications: "+apps.length
+:"Your Applications: "+myApps.length),
+e("div",{className:"glass soft-card p-6"},
+"Role: "+user.role.toUpperCase())
 ),
 
-/* ADMIN FEEDBACK */
 user.role==="admin" &&
-e("div",{className:"cardBox"},
-e("h3",null,"Post Feedback"),
-e("select",{value:selected,onChange:i=>setSelected(i.target.value)},
+e("div",{className:"glass soft-card p-6 mb-6"},
+e("h3",{className:"mb-3"},"Give Feedback"),
+
+e("select",{className:"w-full p-3 bg-slate-900 soft-input mb-3",
+onChange:i=>setSelected(i.target.value)},
 e("option",{value:""},"Select Student"),
 ...apps.map((a,i)=>e("option",{key:i,value:a.email},a.email))
 ),
+
 e("textarea",{placeholder:"Write feedback...",
-value:text,onChange:i=>setText(i.target.value)}),
-e("button",{onClick:()=>{
-if(!selected||!text.trim()) return;
+className:"w-full p-3 bg-slate-900 soft-input mb-3",
+onChange:i=>setText(i.target.value)}),
+
+e("button",{className:"bg-cyan-500 px-6 soft-btn",
+onClick:()=>{
+if(!selected||!text) return;
 addFeedback({email:selected,text});
-setSelected("");setText("");
-}},"Submit Feedback")
+setText("");
+}},
+"Submit")
 ),
 
-e("div",{className:"cardBox"},
-e("h3",null,"Feedback"),
+e("div",{className:"glass soft-card p-6"},
+e("h3",{className:"mb-3"},"Feedback"),
 myFeedback.length===0
 ? e("p",null,"No feedback yet")
-: myFeedback.map((f,i)=>e("div",{className:"job",key:i},f.email+" — "+f.text))
+: myFeedback.map((f,i)=>
+e("div",{key:i,className:"bg-slate-900 p-3 rounded-xl mb-2"},
+f.email+" — "+f.text))
 )
 );
 }
 
-/* INTERNSHIPS */
-function Internships({role,jobs,apply,apps,user,addJob}){
+/* ================= INTERNSHIPS ================= */
+function Internships({user,jobs,setJobs,apps,setApps}){
 
 const [newJob,setNewJob]=React.useState("");
 
-return e("div",{className:"cardBox"},
-e("h3",null,"Internships"),
+function apply(job){
+if(apps.some(a=>a.job===job&&a.email===user.email)) return;
+setApps([...apps,{
+job,
+email:user.email,
+status:"Applied",
+progress:30
+}]);
+}
 
-role==="admin" &&
-e("div",null,
+return e("div",{className:"p-8"},
+
+e("h2",{className:"text-2xl mb-6"},"Internships"),
+
+user.role==="admin" &&
+e("div",{className:"flex gap-3 mb-6"},
 e("input",{placeholder:"Post Internship",
-value:newJob,onChange:i=>setNewJob(i.target.value)}),
-e("button",{onClick:()=>{addJob(newJob);setNewJob("");}},"Post Internship")
+className:"flex-1 p-3 bg-slate-900 soft-input",
+onChange:i=>setNewJob(i.target.value)}),
+e("button",{className:"bg-cyan-500 px-6 soft-btn",
+onClick:()=>{if(newJob)setJobs([...jobs,newJob]);}},
+"Post")
 ),
 
-jobs.map((j,i)=>
-e("div",{className:"job",key:i},
+jobs.map(j=>
+e("div",{className:"glass soft-card glow p-4 mb-3 flex justify-between"},
 j,
-role==="student" &&
-(apps.some(a=>a.job===j && a.email===user.email)
-? e("button",{style:{float:"right",width:"auto",background:"#22c55e"}},"Applied ✓")
-: e("button",{style:{float:"right",width:"auto"},onClick:()=>apply(j)},"Apply"))
+user.role==="student" &&
+(apps.some(a=>a.job===j&&a.email===user.email)
+? e("span",{className:"text-green-400"},"Applied ✓")
+: e("button",{className:"bg-cyan-500 px-4 soft-btn",
+onClick:()=>apply(j)},"Apply"))
+)
+));
+}
+
+/* ================= APPLICATIONS WITH TRACKING ================= */
+function Applications({apps,user,setApps}){
+
+const statusMap={
+"Applied":30,
+"Under Review":60,
+"Shortlisted":80,
+"Selected":100
+};
+
+function updateStatus(index,newStatus){
+const updated=[...apps];
+updated[index].status=newStatus;
+updated[index].progress=statusMap[newStatus];
+setApps(updated);
+}
+
+const list=user.role==="admin"
+?apps
+:apps.filter(a=>a.email===user.email);
+
+return e("div",{className:"p-8"},
+
+e("h2",{className:"text-2xl mb-6"},"Applications"),
+
+list.map((a,i)=>
+e("div",{key:i,className:"glass soft-card p-5 mb-5"},
+
+e("p",{className:"font-semibold"},a.job+" — "+a.email),
+
+e("div",{className:"w-full bg-slate-800 h-3 rounded-full mt-3"},
+e("div",{style:{width:a.progress+"%"},
+className:"h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"})
+),
+
+e("p",{className:"text-sm mt-2 text-cyan-300"},
+"Status: "+a.status+" ("+a.progress+"%)"),
+
+user.role==="admin" &&
+e("select",{className:"mt-3 p-2 bg-slate-900 soft-input",
+onChange:i=>updateStatus(i.target.value?i.target.selectedIndex-1:i,i.target.value)},
+["Applied","Under Review","Shortlisted","Selected"]
+.map(s=>e("option",{value:s},s)))
 ))
-);
-}
-
-/* APPLICATIONS */
-function Applications({apps,user}){
-const list=user.role==="admin"?apps:apps.filter(a=>a.email===user.email);
-return e("div",{className:"cardBox"},
-e("h3",null,"Applications"),
-list.length===0?e("p",null,"No applications yet")
-:list.map((a,i)=>e("div",{className:"job",key:i},a.job+" — "+a.email))
-);
-}
-
-/* PROFILE */
-function Profile({user}){
-return e("div",{className:"cardBox"},
-e("div",{className:"bigAvatar"},user.username[0].toUpperCase()),
-e("h2",null,user.username),
-e("p",null,user.email),
-e("p",null,"Role: "+user.role)
 );
 }
 
 /* ================= APP ================= */
 function App(){
 
-const [logged,setLogged]=React.useState(false);
 const [user,setUser]=React.useState(null);
 const [tab,setTab]=React.useState("dashboard");
 
@@ -253,44 +256,30 @@ const [jobs,setJobs]=React.useState([
 const [apps,setApps]=React.useState([]);
 const [feedback,setFeedback]=React.useState([]);
 
-function apply(job){
-if(apps.some(a=>a.job===job&&a.email===user.email))return;
-setApps([...apps,{job,email:user.email}]);
-}
-
-function addJob(job){
-if(!job.trim())return;
-setJobs([...jobs,job]);
-}
-
 function addFeedback(f){
 setFeedback([...feedback,f]);
 }
 
-if(!logged)
-return e(Auth,{onLogin:(u)=>{setUser(u);setLogged(true);}});
+if(!user) return e(Auth,{onLogin:setUser});
 
-return e("div",{className:"container"},
+return e("div",{className:"flex h-screen"},
 
-e("div",{className:"sidebar"},
-e("div",{className:"profileTop"},
-e("div",{className:"avatar"},user.username[0].toUpperCase()),
-e("div",null,e("b",null,"InternHub"),e("div",null,user.username))
+e("div",{className:"w-64 p-6 flex flex-col bg-slate-950 border-r border-slate-800"},
+e("h1",{className:"text-xl font-bold mb-10 text-cyan-400"},"InternHub"),
+
+["dashboard","internships","applications"].map(t =>
+e("div",{key:t,onClick:()=>setTab(t),
+className:"p-3 mb-2 cursor-pointer rounded-xl hover:bg-slate-800 capitalize"},t)
 ),
 
-e("div",{className:"menu",onClick:()=>setTab("dashboard")},"Dashboard"),
-e("div",{className:"menu",onClick:()=>setTab("internships")},"Internships"),
-e("div",{className:"menu",onClick:()=>setTab("applications")},"Applications"),
-e("div",{className:"menu",onClick:()=>setTab("profile")},"Profile"),
-
-e("button",{className:"logoutBtn",onClick:()=>setLogged(false)},"Logout")
+e("button",{className:"mt-auto bg-red-500 py-2 soft-btn",
+onClick:()=>setUser(null)},"Logout")
 ),
 
-e("div",{className:"main"},
+e("div",{className:"flex-1 overflow-auto"},
 tab==="dashboard" && e(Dashboard,{jobs,apps,user,feedback,addFeedback}),
-tab==="internships" && e(Internships,{role:user.role,jobs,apply,apps,user,addJob}),
-tab==="applications" && e(Applications,{apps,user}),
-tab==="profile" && e(Profile,{user})
+tab==="internships" && e(Internships,{user,jobs,setJobs,apps,setApps}),
+tab==="applications" && e(Applications,{apps,user,setApps})
 )
 );
 }
